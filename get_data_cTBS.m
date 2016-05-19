@@ -1,13 +1,14 @@
 % modified by ZKA Sept 2015
-clear alla
+clear all
 close all
-cd /data/bil-mb4/zarinah-data/cerebellar-data/pitch-pert-cTBS/cTBS_data/data_analysis/cerebellarTBS/;
+cd /Users/zagnew/Cereb_data/cTBS/;
 
 yes_reload = 0;
 if yes_reload || ~exist('num','var')
   clear all
+  [num, txt,raw]=xlsread('cTBS_info_files/pre-pre.xls')
+  [num, txt,raw]=xlsread('cTBS_info_files/post-post.xls')
   
-  [num, txt,raw]=xlsread('cTBSinfo_sham_pre_post.xls')
   %[num,txt,raw]= xlsread('cTBSinfo_cereb_pre_post.xls'); 
   %[num,txt,raw] = xlsread('ctbs_info_postcomp.xls');
   [numrows,numcols] = size(num);
@@ -66,6 +67,7 @@ curdir = cd;
 fprintf('cerebellarTBS:\n');
 % cd('cerebellarTBS');
 %cd('unpred');
+cd data
 for iexpr = 1:nrows4patients
   the_expr_dir = date_to_dir(txt,num,irows4patients,icol4date,icol4order,iexpr);
   cd(the_expr_dir);
@@ -109,8 +111,6 @@ for iexpr = 1:nrows4controls
   control_dat.pert_resp(iexpr).nframeswin = pert_resp.frame_taxis_end_point-pert_resp.frame_taxis_start_point+1;
   control_dat.pert_resp(iexpr).n_good_trials = pert_resp.n_good_trials;
   
-  
-  
   control_dat.pert_resp(iexpr).cents4comp.pitch_in.dat{1} = pert_resp.cents4comp.pitch_in.dat{1}(:,pert_resp.frame_taxis_start_point:pert_resp.frame_taxis_end_point);
   control_dat.pert_resp(iexpr).cents4comp.pitch_in.dat{2} = pert_resp.cents4comp.pitch_in.dat{2}(:,pert_resp.frame_taxis_start_point:pert_resp.frame_taxis_end_point);
   control_dat.pert_resp(iexpr).cents4comp.pitch_in.dat{3} = pert_resp.cents4comp.pitch_in.dat{3}(:,pert_resp.frame_taxis_start_point:pert_resp.frame_taxis_end_point);
@@ -130,5 +130,19 @@ for iexpr = 1:nrows4controls
   cd ..
 end
 cd ..
-save('patient','patient_dat');
-save('control','control_dat');
+% save('patient','patient_dat');
+% save('control','control_dat');
+
+save('pre_cereb','patient_dat');
+save('pre_sham','control_dat');
+
+% save('post_cereb','patient_dat');
+% save('post_sham','control_dat');
+
+
+axes
+subplot(211)
+hpl = plot(control_dat.frame_taxis,squeeze(control_dat.comp_resp(1,1,:)));
+subplot(212)
+hpl = plot(control_dat.frame_taxis,squeeze(control_dat.comp_resp(1,2,:)));
+
