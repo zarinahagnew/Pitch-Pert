@@ -1,7 +1,10 @@
+
+cd /Users/zagnew/Cereb_data/cTBS/cTBS_info_files
+
 yes_reload = 0;
 if yes_reload || ~exist('num','var')
   clear all
-  [num,txt,raw] = xlsread('pitchpert_info.xls');
+  [num,txt,raw] = xlsread('pre-post-beh.xls');
   [numrows,numcols] = size(num);
 %    num = [NaN*ones(1,numcols); num];
 %   [numrows,numcols] = size(num);
@@ -21,8 +24,7 @@ if ~ispc
     converteddatedata = datestr(correcteddatedata,'mm/dd/yyyy');
     cellsconverteddatedata = cellstr(converteddatedata);
     
-    firstdatesindices = f
-ind(numbervalues == 1,1,'first');
+    firstdatesindices = find(numbervalues == 1,1,'first');
     lastdatesindices = find(numbervalues == 1,1,'last');
     datecolumn(firstdatesindices:lastdatesindices,1) = cellsconverteddatedata;
     raw(:,icol4date) = datecolumn;
@@ -33,8 +35,8 @@ end
 irows4comp = find(~isnan(num(:,icol4comp)));
 nrows4comp = length(irows4comp);
 
-irows4all_patients = strmatch('patient',txt(:,icol4type));
-irows4all_controls = strmatch('control',txt(:,icol4type));
+irows4all_patients = strmatch('pre',txt(:,icol4type));
+irows4all_controls = strmatch('post',txt(:,icol4type));
 
 irows4patients = intersect(irows4all_patients,irows4comp);
 nrows4patients = length(irows4patients);
@@ -46,7 +48,7 @@ patient_comp(:,2) = num(irows4patients,icol4stde);
 
 control_comp(:,1) = num(irows4controls,icol4comp);
 control_comp(:,2) = num(irows4controls,icol4stde);
-patients
+
 %Limits for data that would be extracted
 t_start = -0.2; 
 t_end = 1;
