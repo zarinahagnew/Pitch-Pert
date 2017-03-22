@@ -12,8 +12,6 @@ TODO
 plot peaks 
 
 
-
-
 % anova on mean comp values
 plot_mean_comp_anova_cTBS
 

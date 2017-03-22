@@ -1,14 +1,24 @@
 %% ANOVA for group data
 % ZKA Oct 2015
 
+% on the workstations data is stored at bil-mb4
+% 
+% analyse by running run_pitch_pert
+% using 0.2, and 1.2 as parameters
+% store the values Mean COmp and Stdev comp in spread sheets in .. 
+% 
+% once this is all done run get_data_cTBS.m
+% /Users/zagnew/GitHub/Pitch-Pert/cTBS_pitchpert/get_data_cTBS.m
+% 
 % once you have run get_data_cTBS.m, this will create 4 files that are used here. This script analyses the lot and saves it as GROUPDATA.mat. 
-
+% 
+% run pitchpert_fourway
+% /Users/zagnew/GitHub/Pitch-Pert/cTBS_pitchpert/pitchpert_fourway.m
 
 %% the analysis:
 % cents4comp(1).pitch_in.dat{1} is the response to the postive shift and looks like a negative vocal response
 % here we flip this and add it to the negative pert, so that it all looks like we are seeing responses to the negative perturbation. This looks like an increase in pitch. 
 % the flipped data is gp.precereb.patient_dat.pert_resp(isubj).cents4comp(1).abspitch_in.dat
-
 
 % pitch_in.dat{1} - response to down pert
 % pitch_in.dat{2} response to up pert
@@ -21,9 +31,9 @@
 % post condition compared to the pre stim condition, and a negative value indicates the
 % opposite
 
+
 % TO DO
 %for the anova want to run for time point also, and put frame in as 413 levels
-
 % or 
 % use mean .peakcomp .comp values post and pre and put into anova
 % to see wherepitchpert_fourway this effect is in the trial look at mean(subdata_pre_cereb(isub).pert_resp.tpeak{1})
@@ -44,18 +54,20 @@
 % cd /data/bil-mb4/zarinah-data/cerebellar-data/pitch-pert-cTBS/cTBS_data/data_analysis
 
 %% having run /home/zagnew/data_analysis_code/pitch_pert_stats/get_data_cTBS.m
-
-set(0,'DefaultFigureWindowStyle','docked');
 clear all
 close all
+set_params_cTBS
+
+set(0,'DefaultFigureWindowStyle','docked');
+addpath('/Users/zagnew/GitHub/Pitch-Pert/cTBS_pitchpert/')
 z_colours;
 
 numsubs_1=13;
-numsubs_2=9;
+numsubs_2=10;
 
-%cd /Users/zagnew/Desktop/cTBSdata
 cd /Users/zagnew/cerebellarTBS/raw_data/
 load /Users/zagnew/cerebellarTBS/data_analysis/groupdata/GROUPDATA.mat
+
 
 % for plottin' 
 frame_taxis = gp.precereb.patient_dat.frame_taxis;
@@ -80,39 +92,29 @@ for isubj=1:numsubs_2
     gp.postbeh.control_dat.pert_resp(isubj).cents4comp(1).abspitch_in.dat = [-gp.postbeh.control_dat.pert_resp(isubj).cents4comp(1).pitch_in.dat{1}; gp.postbeh.control_dat.pert_resp(isubj).cents4comp(1).pitch_in.dat{2}];
 end
 
-% 
-% % check
-% subplot(311)
-% plot(mean(gp.precereb.patient_dat.pert_resp(isubj).cents4comp(1).pitch_in.dat{1}))
-% axis([0 600 -60 60])
-% 
-% subplot(312)
-% plot(mean(gp.precereb.patient_dat.pert_resp(isubj).cents4comp(1).pitch_in.dat{2}))
-% axis([0 600 -60 60])
-% 
-% subplot(313)
-% plot(mean(gp.precereb.patient_dat.pert_resp(isubj).cents4comp(1).abspitch_in.dat))
-% hold
-% plot(mean(gp.postcereb.control_dat.pert_resp(isubj).cents4comp(1).abspitch_in.dat), 'r')
-% axis([0 600 -60 60])
+% to check the up and down trials are all good and correct:
+% plot_trials_cTBS;
 
-
-
-%% calc mean comp
+%% calc mean compensation, and the difference between post and pre compensation for each subject
 for isubj=1:numsubs_1;
     gp.meanpitchpertresp_precereb(isubj,:)=mean(gp.precereb.patient_dat.pert_resp(isubj).cents4comp(1).abspitch_in.dat);
     gp.meanpitchpertresp_postcereb(isubj,:)=mean(gp.postcereb.control_dat.pert_resp(isubj).cents4comp(1).abspitch_in.dat);
     gp.meanpitchpertresp_presham(isubj,:)=mean(gp.presham.patient_dat.pert_resp(isubj).cents4comp(1).abspitch_in.dat);
     gp.meanpitchpertresp_postsham(isubj,:)=mean(gp.postsham.control_dat.pert_resp(isubj).cents4comp(1).abspitch_in.dat);
-
+    
     gp.cereb_diff_eachsub(isubj,:)=gp.meanpitchpertresp_postcereb(isubj,:)-gp.meanpitchpertresp_precereb(isubj,:);
-    gp.sham_diff_eachsub(isubj,:)=gp.meanpitchpertresp_postsham(isubj,:)-gp.meanpitchpertresp_presham(isubj,:);    
+    gp.sham_diff_eachsub(isubj,:)=gp.meanpitchpertresp_postsham(isubj,:)-gp.meanpitchpertresp_presham(isubj,:);       
+    
+    gp.cereb_peakdiff_eachsub(isubj)=max(gp.cereb_diff_eachsub(isubj,:));
+    gp.sham_peakdiff_eachsub(isubj)=max(gp.sham_diff_eachsub(isubj,:));
 end
 
 for isubj=1:numsubs_2;
     gp.meanpitchpertresp_prebeh(isubj,:)=mean(gp.prebeh.patient_dat.pert_resp(isubj).cents4comp(1).abspitch_in.dat);
     gp.meanpitchpertresp_postbeh(isubj,:)=mean(gp.postbeh.control_dat.pert_resp(isubj).cents4comp(1).abspitch_in.dat);  
+    
     gp.beh_diff_eachsub(isubj,:)=gp.meanpitchpertresp_postbeh(isubj,:)-gp.meanpitchpertresp_prebeh(isubj,:);
+    gp.beh_peakdiff_eachsub(isubj)=max(gp.beh_diff_eachsub(isubj,:));
 end
 
 %% plot all post stim trials
@@ -139,7 +141,7 @@ subplot(311)
 plot(frame_taxis,nanmean(gp.meanpitchpertresp_precereb)','r','LineWidth',3);
 hold 
 plot(frame_taxis,nanmean(gp.meanpitchpertresp_postcereb)','Color',masked_colour,'LineWidth',3);
-axis([-0.5 1 -20 30])
+axis([-0.25 1 -20 30])
 title('cerebellar stimulation')
 goodplot
 
@@ -149,21 +151,82 @@ hold
 plot(frame_taxis,nanmean(gp.meanpitchpertresp_postsham)','Color',masked_colour,'LineWidth',3);
 goodplot
 title('vertex stimulation')
-
-axis([-0.5 1 -20 30])
+axis([-0.25 1 -20 30])
 
 subplot(313)
 plot(frame_taxis,nanmean(gp.meanpitchpertresp_prebeh)','r','LineWidth',3);
 hold 
 plot(frame_taxis,nanmean(gp.meanpitchpertresp_postbeh)','Color',masked_colour,'LineWidth',3);
 goodplot
-axis([-0.5 1 -20 30])
+axis([-0.25 1 -20 30])
 title('no stimulation')
-legend('pre stim', 'post stim','Location','SouthWest')
+legend('pre stim', 'post stim','Location','SouthEast')
+print(gcf, '-dpdf', '-r150', '/Users/zagnew/cerebellarTBS/data_analysis/figures/preandpoststimresponses2.pdf');
+
+
+%% calc and plot peak difference in compensation
+gp.cereb_peakdiff_gpmean=mean(gp.cereb_peakdiff_eachsub)
+gp.cereb_peakdiff_gpsem=std(gp.cereb_peakdiff_eachsub)/sqrt(numsubs_1);
+
+gp.sham_peakdiff_gpmean=mean(gp.sham_peakdiff_eachsub)
+gp.sham_peakdiff_gpsem=std(gp.sham_peakdiff_eachsub)/sqrt(numsubs_1);
+
+gp.beh_peakdiff_gpmean=mean(gp.beh_peakdiff_eachsub)
+gp.beh_peakdiff_gpsem=std(gp.beh_peakdiff_eachsub)/sqrt(numsubs_2);
+
+figure
+whitebg('white')
+annotation('textbox', [0 0.9 1 0.1], ...
+    'String', 'Peak Difference in Compensation', ...
+    'EdgeColor', 'none', ...
+    'HorizontalAlignment', 'center')
+
+y_peakpert=[gp.cereb_peakdiff_gpmean gp.sham_peakdiff_gpmean gp.beh_peakdiff_gpmean];
+errY2 = [gp.cereb_peakdiff_gpsem gp.sham_peakdiff_gpsem gp.beh_peakdiff_gpsem];
+h = barwitherr(errY2, y_peakpert);% Plot with errorbars
+
+set(gca,'XTickLabel',{'cerebellar','sham', 'beh'})
+ylabel('Diff in Peak Compensation to Perturbation (cents) post - pre')
+set(h(1),'FaceColor',[1 1 1],'EdgeColor', masked_colour ,'LineWidth',3);
+goodplot
+print(gcf, '-dpdf', '-r150', '/Users/zagnew/cerebellarTBS/data_analysis/figures/MeanDiffPeakComp.pdf');
+
+
+%% anova on peak diff data
+peakdiffdata=[gp.cereb_peakdiff_eachsub gp.sham_peakdiff_eachsub gp.beh_peakdiff_eachsub]
+
+alldata=length(peakdiffdata);
+
+%create subject group
+% test=ones(1,numsubs_1);
+% test2=test*2;
+% test3=test*3;
+% test4=test*4;
+% test5=test*5;
+% test6=test*6;
+% test7=test*7;
+% test8=test*8;
+% subjectgroup=[test test2 test3 test4 test5 test6 test7 test8 test8+1 test8+2 test8+3 test8+4 test8+5];
+% subjectgroup=[subjectgroup subjectgroup];
+
+%create window group
+site = cell(1,alldata);
+for i=1:numsubs_1
+    site{i} = 'cereb';
+end
+for i=numsubs_1+1:numsubs_1*2
+    site{i} = 'sham';
+end
+for i=(numsubs_1*2)+1:(numsubs_1*2)+numsubs_2
+    site{i} = 'behonly';
+end
+site=site';
+
+group1=site;
+[pvals,tbl,stats] = anovan(peakdiffdata, {group1},'model',2, 'random',1,'varnames',{'stim site'});
 
 
 %% find peaks
-
 gp.gpmean_prebeh=nanmean(gp.meanpitchpertresp_prebeh);
 gp.gpmean_postbeh=nanmean(gp.meanpitchpertresp_postbeh);
 gp.gpmean_precereb=nanmean(gp.meanpitchpertresp_precereb);
@@ -185,7 +248,7 @@ annotation('textbox', [0 0.9 1 0.1], ...
     'EdgeColor', 'none', ...
     'HorizontalAlignment', 'center')
 y_peakpert=[gp.gpmean_precereb_peak gp.gpmean_postcereb_peak; gp.gpmean_presham_peak gp.gpmean_postsham_peak ; gp.gpmean_prebeh_peak gp.gpmean_postbeh_peak];
-errY2 = [5 5; 5 5  ; 5 5];
+errY2 = [2 1; 2.4 4  ; 1.3 2];
 h = barwitherr(errY2, y_peakpert);% Plot with errorbars
 set(gca,'XTickLabel',{'cerebellar','sham', 'beh'})
 ylabel('Peak Compensation to Perturbation (cents)')
@@ -194,8 +257,6 @@ set(h(2),'FaceColor',clear_colour,'EdgeColor', clear_colour ,'LineWidth',1.5);
 goodplot
 legend('pre stim', 'post stim')
 print(gcf, '-dpdf', '-r150', '/Users/zagnew/cerebellarTBS/data_analysis/figures/MeanPeakComp.pdf');
-
-
 
 %% anova on whole trial data
 anovadata=[...
@@ -270,15 +331,16 @@ group2=site;
 figure
 whitebg('white')
 annotation('textbox', [0 0.9 1 0.1], ...
-    'String', 'mean difference in compensation, early and late windows', ...
+    'String', 'mean difference in compensation', ...
     'EdgeColor', 'none', ...
     'HorizontalAlignment', 'center')
+
 y_pertcomp=[nanmean(nanmean(gp.cereb_diff_eachsub))  nanmean(nanmean(gp.sham_diff_eachsub)) nanmean(nanmean(gp.beh_diff_eachsub))];
 errY2 = [nanstd(nanstd(gp.cereb_diff_eachsub))/sqrt(numsubs_1) nanstd(nanstd(gp.sham_diff_eachsub))/sqrt(numsubs_1) nanstd(nanstd(gp.beh_diff_eachsub))/sqrt(numsubs_2)];
 h = barwitherr(errY2, y_pertcomp);% Plot with errorbars
 set(gca,'XTickLabel',{'cerebellar','sham', 'beh'})
 ylabel('Difference in Compensation to Perturbation (cents)')
-set(h(1),'FaceColor',masked_colour,'EdgeColor', masked_colour ,'LineWidth',1.5);
+set(h(1),'FaceColor',[1 1 1],'EdgeColor', masked_colour ,'LineWidth',1.5);
 goodplot
 
 print(gcf, '-dpdf', '-r150', '/Users/zagnew/cerebellarTBS/data_analysis/figures/wholetrial_diffincomp.pdf');
