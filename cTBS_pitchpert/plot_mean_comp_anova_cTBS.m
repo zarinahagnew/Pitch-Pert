@@ -60,14 +60,14 @@ meancomp_anova.group3_subject=[1:15 1:15 1:13 1:13]
 
 display 'first anova is the interaction'
 
-save /Users/zagnew/Cereb_data/cTBS/data_analysis/stats/meancomp_anova meancomp_anova
+% save /Users/zagnew/Cereb_data/cTBS/data_analysis/stats/meancomp_anova meancomp_anova
 
 [meancomp_anova_full.p_full,meancomp_anova.table,meancomp_anova_full.stats,meancomp_anova_full.terms]...
     = anovan(anovandata_meancomp,{meancomp_anova.group1_session meancomp_anova.group2_site meancomp_anova.group3_subject}, 'full')
 
 display 'second anova is the full model'
 
-save /Users/zagnew/Cereb_data/cTBS/data_analysis/stats/meancomp_anova_full meancomp_anova_full
+% save /Users/zagnew/Cereb_data/cTBS/data_analysis/stats/meancomp_anova_full meancomp_anova_full
 
 % plot this
 figure
@@ -82,7 +82,7 @@ set(h(2),'FaceColor',masked_colour,'EdgeColor', masked_colour ,'LineWidth',1.5);
 title(sprintf('Compensation to PP before and after TBS'));
 goodplot
 legend('pre stim', 'post stim')
-print(gcf, '-dpdf', '-r150', '/Users/zagnew/Cereb_data/cTBS/figures/meancomp.pdf');
+% print(gcf, '-dpdf', '-r150', '/Users/zagnew/Cereb_data/cTBS/figures/meancomp.pdf');
 
 %% 
 

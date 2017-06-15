@@ -7,7 +7,7 @@ load pitch_pert_ataxia_data
 % peak comp
 controls_peakcomp=data.peakcomp(1:11);
 patients_peakcomp=data.peakcomp(12:end);
-controls_meanpeakcomp=mean(controls_peakcomp):
+controls_meanpeakcomp=mean(controls_peakcomp);
 patients_meanpeakcomp=mean(patients_peakcomp);
 controls_sempeakcomp=std(controls_peakcomp)/sqrt(length(controls_peakcomp));
 patients_sempeakcomp=std(patients_peakcomp)/sqrt(length(patients_peakcomp));
@@ -23,13 +23,6 @@ controls_semtpeak=std(controls_tpeak)/sqrt(length(controls_tpeak));
 patients_semtpeak=std(patients_tpeak)/sqrt(length(patients_tpeak));
 
 [h,p,ci,stats] = ttest2(controls_tpeak, patients_tpeak)
-
-
-
-
-
-
-
 
 data.subject{:}
 
