@@ -136,16 +136,24 @@ group1=subjectgroup;
 group2=window;
 group3=stim_site;
 
-[pvals,tbl,stats]  = anovan(anova_early_mid_late,{group1 group2 group3},'model','interaction');
-[pvals,tbl,stats]  = anovan(anova_early_mid_late,{group2 group3},'model',1,'varnames',{'window' 'stim site'});
-[pvals,tbl,stats]  = anovan(anova_early_mid_late,{group2 group3},'model',2,'varnames',{'window' 'stim site'});
-[pvals,tbl,stats]  = anovan(anova_early_mid_late,{group2 group3},'model',3,'varnames',{'window' 'stim site'});
-[pvals,tbl,stats]  = anovan(anova_early_mid_late,{group1 group2 group3},'model',3,'varnames',{'subject','window' 'stim site'});
+% [pvals,tbl,stats]  = anovan(anova_early_mid_late,{group1 group2 group3},'model','interaction');
+% [pvals,tbl,stats]  = anovan(anova_early_mid_late,{group2 group3},'model',1,'varnames',{'window' 'stim site'});
+% [pvals,tbl,stats]  = anovan(anova_early_mid_late,{group2 group3},'model',2,'varnames',{'window' 'stim site'});
+% [pvals,tbl,stats]  = anovan(anova_early_mid_late,{group2 group3},'model',3,'varnames',{'window' 'stim site'});
+% [pvals,tbl,stats]  = anovan(anova_early_mid_late,{group1 group2 group3},'model',3,'varnames',{'subject','window' 'stim site'});
+% 
+% anovan(anova_early_mid_late, group1)
+% p = anovan(anova_early_mid_late,{group1 group2 group3})
 
-anovan(anova_early_mid_late, group1)
+% this is the one
+p = anovan(anova_early_mid_late,{group2 group3},'model','interaction','varnames',{'window' 'stim site'})
 
-p = anovan(anova_early_mid_late,{group1 group2 group3})
-p = anovan(anova_early_mid_late,{group1 group2 group3},'model','interaction','varnames',{'g1','g2','g3'})
+
+% but why is the
+%p = anovan(anova_early_mid_late,{group1 group2 group3},'model','interaction','varnames',{'subject','window' 'stim site'})
+
+
+
 
 
 
@@ -203,6 +211,11 @@ group2=window;
 group3=stim_site;
 
 % p = anovan(anova_early_late,{group1 group2 group3},'model','interaction');
+
+
+p = anovan(anova_early_late,{group2 group3},'model','interaction','varnames',{'window' 'stim site'})
+
+
 [pvals,tbl,stats]  = anovan(anova_early_late,{group2 group3},'model',1,'varnames',{'window' 'stim site'});
 [pvals,tbl,stats]  = anovan(anova_early_late,{group2 group3},'model',2,'varnames',{'window' 'stim site'});
 
