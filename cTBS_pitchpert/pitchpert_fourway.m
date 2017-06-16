@@ -1,10 +1,9 @@
 %% ANOVA for group data
 % ZKA Oct 2015
-
-%% having run /home/zagnew/data_analysis_code/pitch_pert_stats/get_data_cTBS.m
+% having run /home/zagnew/data_analysis_code/pitch_pert_stats/get_data_cTBS.m
 clear all
 close all
-set_params_cTBS
+set_params_cTBS;
 
 cd /Users/zagnew/cerebellarTBS/raw_data/
 load /Users/zagnew/cerebellarTBS/data_analysis/groupdata/GROUPDATA.mat
@@ -20,11 +19,13 @@ flip_perts;
 % calculates gp.cereb_diff_eachsub which is POST - PRE. Here a postitive
 % value indicates an increase in comp following stimulation. A negative
 % value indicates that compensation was smaller following stimulation. 
+% also calculates cereb_peakdiff_eachsub which is the peak diff in pre and
+% post
+% gp.cereb_peakdiff_eachsub(isubj)=max(gp.cereb_diff_eachsub(isubj,:));
 
-calc_stdev
+calc_stdev;
 
 %% plot all post stim trials
-
 figure
 subplot(211)
 x=1:size(nanmean(gp.meanpitchpertresp_precereb),2);
@@ -41,7 +42,7 @@ hold
 shadedErrorBar(x,mean(gp.meanpitchpertresp_postsham), (std(gp.meanpitchpertresp_presham)/sqrt(13)),{'-','LineWidth', 1.5,'color',[0.1 0.1 0.4]}, 0.2);
 goodplot
 axis([0 500 -20 35])
-
+print(gcf, '-dpdf', '-r150', '/Users/zagnew/cerebellarTBS/data_analysis/figures/wholetrialcomp.pdf');
 
 % or 
 figure
@@ -72,9 +73,6 @@ legend('pre stim', 'post stim','Location','SouthEast')
 print(gcf, '-dpdf', '-r150', '/Users/zagnew/cerebellarTBS/data_analysis/figures/preandpoststimresponses2.pdf');
 
 
-
-
-
 %% calc and plot peak difference in compensation
 gp.cereb_peakdiff_gpmean=mean(gp.cereb_peakdiff_eachsub)
 gp.cereb_peakdiff_gpsem=std(gp.cereb_peakdiff_eachsub)/sqrt(numsubs_1);
@@ -102,11 +100,8 @@ set(h(1),'FaceColor',[1 1 1],'EdgeColor', masked_colour ,'LineWidth',3);
 goodplot
 print(gcf, '-dpdf', '-r150', '/Users/zagnew/cerebellarTBS/data_analysis/figures/MeanDiffPeakComp.pdf');
 
-
-
 %% anova on peak diff data
 peakdiffdata=[gp.cereb_peakdiff_eachsub gp.sham_peakdiff_eachsub gp.beh_peakdiff_eachsub]
-
 alldata=length(peakdiffdata);
 
 %create subject group
@@ -170,6 +165,8 @@ goodplot
 legend('pre stim', 'post stim')
 print(gcf, '-dpdf', '-r150', '/Users/zagnew/cerebellarTBS/data_analysis/figures/MeanPeakComp.pdf');
 
+
+gp.gpmean_precereb_peak
 %% anova on whole trial data
 anovadata=[...
     gp.cereb_diff_eachsub(1,:), ...
@@ -227,18 +224,19 @@ site=site';
 group1=subjectgroup;
 group2=site;
 [pvals,tbl,stats] = anovan(anovadata,{group1 group2},'model','interaction','varnames',{'subject' 'stim site'});
+
+% significant effect of stimulation site on pre and post compensation *****
 [pvals,tbl,stats] = anovan(anovadata, {group1 group2},'model',2, 'random',1,'varnames',{'subject' 'stim site'});
-[pvals,tbl,stats] = anovan(anovadata,{group1 group2},'model',1,'varnames',{'subject' 'stim site'});
 
 % plot this
 figure
-plot(nanmean(nanmean(gp.cereb_diff_eachsub)),'k','LineWidth', 1.2)
+plot(gp.cereb_diff_eachsub_EW_mean,'k','LineWidth', 1.2)
 hold 
 plot(gp.cereb_diff_eachsub_LW_mean, 'k', 'LineWidth', 1.2)
 plot(gp.sham_diff_eachsub_EW_mean, 'r','LineWidth', 1.2)
 plot(gp.sham_diff_eachsub_LW_mean', 'r','LineWidth', 1.2)
-plot(gp.beh_diff_eachsub_EW_mean, 'g','LineWidth', 1.2)
-plot(gp.beh_diff_eachsub_LW_mean', 'g','LineWidth', 1.2)
+% plot(gp.beh_diff_eachsub_EW_mean, 'g','LineWidth', 1.2)
+% plot(gp.beh_diff_eachsub_LW_mean', 'g','LineWidth', 1.2)
 goodplot
 
 figure
@@ -266,6 +264,11 @@ gp.beh_diff_eachsub_sem=std(gp.beh_diff_eachsub)/numsubs_2;
 % -------------------------------------------------------------------------
 %% early and late windows
 EW_LW;
+
+
+
+
+
 
 
 
@@ -341,73 +344,6 @@ EW_LW;
 % 
 % %[pvals,tbl,stats] = anovan(anova_early_late, {group1 group2 group3},'model',2, 'random',1,'varnames',{'subject' 'window' 'stim site'});
 % % multcompare(stats)
-
-
-%% early and late window anova including two stim conditions only
-% Z notes
-% EW and LW are different
-% sham and vertex windows are also different lenghts
-
- anova_early_late= ...
-    [gp.cereb_diff_eachsub_EW(1,:) gp.cereb_diff_eachsub_EW(2,:) gp.cereb_diff_eachsub_EW(3,:) gp.cereb_diff_eachsub_EW(4,:) ...
-    gp.cereb_diff_eachsub_EW(5,:) gp.cereb_diff_eachsub_EW(6,:) gp.cereb_diff_eachsub_EW(7,:) gp.cereb_diff_eachsub_EW(8,:)...
-    gp.cereb_diff_eachsub_EW(9,:) gp.cereb_diff_eachsub_EW(10,:) gp.cereb_diff_eachsub_EW(11,:) gp.cereb_diff_eachsub_EW(12,:) ...
-    gp.cereb_diff_eachsub_EW(13,:) gp.cereb_diff_eachsub_LW(1,:) gp.cereb_diff_eachsub_LW(2,:) gp.cereb_diff_eachsub_LW(3,:) gp.cereb_diff_eachsub_LW(4,:) ...
-    gp.cereb_diff_eachsub_LW(5,:) gp.cereb_diff_eachsub_LW(6,:) gp.cereb_diff_eachsub_LW(7,:) gp.cereb_diff_eachsub_LW(8,:)...
-    gp.cereb_diff_eachsub_LW(9,:) gp.cereb_diff_eachsub_LW(10,:) gp.cereb_diff_eachsub_LW(11,:) gp.cereb_diff_eachsub_LW(12,:) ...
-    gp.cereb_diff_eachsub_LW(13,:) gp.sham_diff_eachsub_EW(1,:) gp.sham_diff_eachsub_EW(2,:) gp.sham_diff_eachsub_EW(3,:) gp.sham_diff_eachsub_EW(4,:) ...
-    gp.sham_diff_eachsub_EW(5,:) gp.sham_diff_eachsub_EW(6,:) gp.sham_diff_eachsub_EW(7,:) gp.sham_diff_eachsub_EW(8,:)...
-    gp.sham_diff_eachsub_EW(9,:) gp.sham_diff_eachsub_EW(10,:) gp.sham_diff_eachsub_EW(11,:) gp.sham_diff_eachsub_EW(12,:) ...
-    gp.sham_diff_eachsub_EW(13,:) gp.sham_diff_eachsub_LW(1,:) gp.sham_diff_eachsub_LW(2,:) gp.sham_diff_eachsub_LW(3,:) gp.sham_diff_eachsub_LW(4,:) ...
-    gp.sham_diff_eachsub_LW(5,:) gp.sham_diff_eachsub_LW(6,:) gp.sham_diff_eachsub_LW(7,:) gp.sham_diff_eachsub_LW(8,:)...
-    gp.sham_diff_eachsub_LW(9,:) gp.sham_diff_eachsub_LW(10,:) gp.sham_diff_eachsub_LW(11,:) gp.sham_diff_eachsub_LW(12,:) ...
-    gp.sham_diff_eachsub_LW(13,:)];
-
-alldata=length(anova_early_late);
-eachsub=151;
-
-
-
-%create subject group
-test=ones(1,eachsub);
-test2=test*2;
-test3=test*3;
-test4=test*4;
-test5=test*5;
-test6=test*6;
-test7=test*7;
-test8=test*8;
-test9=test*9;
-test10=test*10;
-test11=test*11;
-test12=test*12;
-test13=test*13;
-
-subjectgroup=[test test2 test3 test4 test5 test6 test7 test8 test8+1 test8+2 test8+3 test8+4 test8+5];
-subjectgroup=[subjectgroup subjectgroup subjectgroup subjectgroup];
- 
-window_early=ones(1,1963);
-window_late=window_early*2;
-
-window=[window_early window_late window_early window_late];
-
-cereb=ones(1,151*26);
-sham=cereb*2;
-stim_site=[cereb sham];
-group1=subjectgroup;
-group2=window;
-group3=stim_site;
-
-% p = anovan(anova_early_late,{group1 group2 group3},'model','interaction');
-[pvals,tbl,stats]  = anovan(anova_early_late,{group2 group3},'model',1,'varnames',{'window' 'stim site'});
-[pvals,tbl,stats]  = anovan(anova_early_late,{group2 group3},'model',2,'varnames',{'window' 'stim site'});
-
-
-[pvals,tbl,stats]  = anovan(anova_early_late,{group1 group2 group3},'model',2,'varnames',{'subject' 'window' 'stim site'});
-[pvals,tbl,stats]  = anovan(anova_early_late,{group1 group2 group3},'model',3,'varnames',{'subject' 'window' 'stim site'});
-
-%[pvals,tbl,stats] = anovan(anova_early_late, {group1 group2 group3},'model',2, 'random',1,'varnames',{'subject' 'window' 'stim site'});
-% multcompare(stats)
 
 
 %% whole trial anova including two stim conditions only
