@@ -27,6 +27,24 @@ gp.sham_diff_eachsub_EW_mean=mean(gp.sham_diff_eachsub(:,EW));
 gp.sham_diff_eachsub_MW_mean=mean(gp.sham_diff_eachsub(:,MW));
 gp.sham_diff_eachsub_LW_mean=mean(gp.sham_diff_eachsub(:,LW));
 
+
+
+% subject means for anova
+for isub=1: 13
+sub_cereb_diff_EW(isub)=nanmean(gp.cereb_diff_eachsub(isub,EW))
+sub_sham_diff_EW(isub)=nanmean(gp.sham_diff_eachsub(isub,EW))
+
+sub_cereb_diff_MW(isub)=nanmean(gp.cereb_diff_eachsub(isub,MW))
+sub_sham_diff_MW(isub)=nanmean(gp.sham_diff_eachsub(isub,MW))
+
+sub_cereb_diff_LW(isub)=nanmean(gp.cereb_diff_eachsub(isub,LW))
+sub_sham_diff_LW(isub)=nanmean(gp.sham_diff_eachsub(isub,LW))
+
+end
+
+
+
+
 % gp.beh_diff_eachsub_EW=gp.beh_diff_eachsub(:,EW);
 % gp.beh_diff_eachsub_LW=gp.beh_diff_eachsub(:,LW);
 % gp.beh_diff_eachsub_EW_mean=mean(gp.beh_diff_eachsub(:,EW));
@@ -145,7 +163,7 @@ group3=stim_site;
 % anovan(anova_early_mid_late, group1)
 % p = anovan(anova_early_mid_late,{group1 group2 group3})
 
-%% this is the one
+% this is the one
 p = anovan(anova_early_mid_late,{group2 group3},'model','interaction','varnames',{'window' 'stim site'})
 
 

@@ -44,6 +44,30 @@ goodplot
 axis([0 500 -20 35])
 print(gcf, '-dpdf', '-r150', '/Users/zagnew/cerebellarTBS/data_analysis/figures/wholetrialcomp.pdf');
 
+% or
+figure
+subplot(121)
+x=1:size(nanmean(gp.meanpitchpertresp_precereb),2);
+shadedErrorBar(x,mean(gp.meanpitchpertresp_precereb), (std(gp.meanpitchpertresp_precereb)/sqrt(13)),{'-','LineWidth', 1.5,'color',[0.1 0.1 0.4]}, 0.2);
+hold
+shadedErrorBar(x,mean(gp.meanpitchpertresp_postcereb), (std(gp.meanpitchpertresp_postcereb)/sqrt(13)),{'-','LineWidth', 1.5,'color',[0.8 0 0.2]}, 0.2);
+goodplot
+axis([0 500 -20 35])
+subplot(122)
+x=1:size(nanmean(gp.meanpitchpertresp_precereb),2);
+%shadedErrorBar(x,mean(gp.meanpitchpertresp_postcereb), (std(gp.meanpitchpertresp_postcereb)/sqrt(13)),{'-','LineWidth', 1.5,'color',[0.8 0 0.2]}, 0.2);
+shadedErrorBar(x,mean(gp.meanpitchpertresp_presham), (std(gp.meanpitchpertresp_presham)/sqrt(13)),{'-','LineWidth', 1.5,'color',[0.1 0.1 0.4]}, 0.2);
+hold
+shadedErrorBar(x,mean(gp.meanpitchpertresp_postsham), (std(gp.meanpitchpertresp_presham)/sqrt(13)),{'-','LineWidth', 1.5,'color',[0.8 0 0.2]}, 0.2);
+goodplot
+axis([0 500 -20 35])
+legend('moo', 'moo')
+print(gcf, '-dpdf', '-r150', '/Users/zagnew/cerebellarTBS/data_analysis/figures/wholetrialcomp2.pdf');
+
+
+
+
+
 % or 
 figure
 subplot(311)
