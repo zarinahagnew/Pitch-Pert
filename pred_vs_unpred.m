@@ -60,28 +60,23 @@ compdata.controls_pred_sem=(std(compdata.controls_pred)/sqrt(nhcs_p))
 compdata.patients_unpred_sem=(std(compdata.patients_unpred)/sqrt(npats_up))
 compdata.controls_unpred_sem=(std(compdata.controls_unpred)/sqrt(nhcs_p))
 
-%% now we have
-% compdata.patients_unpred
-% compdata.controls_unpred
-% compdata.patients_pred
-% compdata.controls_pred
-
-figure
-subplot(211)
-plot(compdata.patients_unpred_mean, 'r')
-hold
-plot(compdata.controls_unpred_mean)
-axis([0 400 -30 40])
-goodplot
-title('unpredictable')
-
-subplot(212)
-plot(compdata.patients_pred_mean, 'r')
-hold
-plot(compdata.controls_pred_mean)
-axis([0 400 -30 40])
-goodplot
-title('predictable')
+%% plot these
+% figure
+% subplot(211)
+% plot(compdata.patients_unpred_mean, 'r')
+% hold
+% plot(compdata.controls_unpred_mean)
+% axis([0 400 -30 40])
+% goodplot
+% title('unpredictable')
+% 
+% subplot(212)
+% plot(compdata.patients_pred_mean, 'r')
+% hold
+% plot(compdata.controls_pred_mean)
+% axis([0 400 -30 40])
+% goodplot
+% title('predictable')
 
 figure
 subplot(211)
@@ -89,7 +84,7 @@ x=1:size(compdata.patients_pred_mean,2);
 shadedErrorBar(x,compdata.patients_pred_mean, compdata.patients_pred_sem,{'-','LineWidth', 1.5,'color',[0.8 0 0.2]});
 hold 
 shadedErrorBar(x,compdata.patients_unpred_mean, compdata.patients_unpred_sem,{'-','LineWidth', 1.5,'color',[0.1 0.1 0.4]});
-axis([0 400 -30 40])
+axis([0 400 -30 45])
 goodplot
 title('patients')
 
@@ -97,45 +92,33 @@ subplot(212)
 shadedErrorBar(x,compdata.controls_pred_mean, compdata.controls_pred_sem,{'-','LineWidth', 1.5,'color',[0.8 0 0.2]});
 hold 
 shadedErrorBar(x,compdata.controls_unpred_mean, compdata.controls_unpred_sem,{'-','LineWidth', 1.5,'color',[0.1 0.1 0.4]});
-axis([0 400 -30 40])
+axis([0 400 -30 45])
 goodplot
 title('controls')
-legend('','','','pred','','','' ,'unpred')
+
+print(gcf, '-dpdf', '-r150', '/Users/zagnew/Cereb_data/predpitchpert/pred_unpred.pdf');
 
 
-shadedErrorBar(x,compdata.controls_pred_mean, compdata.controls_pred_sem,{'-','LineWidth', 1.5,'color',[0.1 0.1 0.4]});
+%% with running ttest2
+figure
+subplot(211)
+x=1:size(compdata.patients_pred_mean,2);
+shadedErrorBar(x,compdata.patients_pred_mean, compdata.patients_pred_sem,{'-','LineWidth', 1.5,'color',[0.8 0 0.2]});
+hold 
+shadedErrorBar(x,compdata.patients_unpred_mean, compdata.patients_unpred_sem,{'-','LineWidth', 1.5,'color',[0.1 0.1 0.4]});
+plot((ttest2(compdata.patients_pred, compdata.patients_unpred))*40, 'k')
+axis([0 400 -30 45])
 goodplot
+title('patients')
 
+subplot(212)
+shadedErrorBar(x,compdata.controls_pred_mean, compdata.controls_pred_sem,{'-','LineWidth', 1.5,'color',[0.8 0 0.2]});
+hold 
+shadedErrorBar(x,compdata.controls_unpred_mean, compdata.controls_unpred_sem,{'-','LineWidth', 1.5,'color',[0.1 0.1 0.4]});
+plot((ttest2(compdata.controls_pred, compdata.controls_unpred))*40, 'k')
+axis([0 400 -30 45])
+goodplot
+title('controls')
 
+print(gcf, '-dpdf', '-r150', '/Users/zagnew/Cereb_data/predpitchpert/pred_unpred_ttest2.pdf');
 
-
-
-
-
-% figure
-% subplot(121)
-% 
-% x=1:size(dafdata.patient_utterance_mean,2);
-% shadedErrorBar(x,dafdata.patient_utterance_mean, dafdata.patient_utterance_sem,{'-','LineWidth', 1.5,'color',[0.1 0.1 0.4]});
-% hold on
-% shadedErrorBar(x,dafdata.control_utterance_mean, dafdata.control_utterance_sem,{'-','LineWidth', 1.5,'color',[0.8 0 0.2]});
-% axis([1 6 -0.1 0.7])
-% goodplot_wide
-
-
-
-
-
-% 
-% 
-% moo=[-patient_dat.pert_resp(1,isubj).cents4comp.pitch_in.dat{1} ; patient_dat.pert_resp(1,isubj).cents4comp.pitch_in.dat{2}];    
-% moo2=patient_dat.pert_resp(1,isubj).cents4comp.pitch_in.dat{1,1}
-% 
-% figure
-% subplot(311)
-% plot(mean(patient_dat.pert_resp(1,isubj).cents4comp.pitch_in.dat{1,1}))
-% subplot(312)
-% plot(mean(patient_dat.pert_resp(1,isubj).cents4comp.pitch_in.dat{1,2}))
-% 
-% subplot(313)
-% plot(mean(patient_dat.pert_resp(1,isubj).cents4comp.pitch_in.dat{1,3}))
